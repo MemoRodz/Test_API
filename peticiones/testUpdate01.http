@@ -1,5 +1,5 @@
 ### PATCH actualizar solo nombre y teléfono
-PATCH http://localhost:8080/users/98974615-3827-4408-b461-238020cef425
+PATCH http://localhost:8080/users/5b0b0feb-42a8-416e-ae20-56e452ab90f3
 Content-Type: application/json
 
 {

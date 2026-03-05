@@ -55,7 +55,7 @@ public class UserService {
         
         if (filter != null && !filter.isEmpty()) {
             // Parse filter: attr+op+value ej name+co+user
-            String[] parts = filter.split("\\+");
+            String[] parts = filter.split("\\+\\s");
             if (parts.length == 3) {
                 String attr = parts[0], op = parts[1], value = parts[2];
                 result = result.stream()
@@ -65,7 +65,7 @@ public class UserService {
         }
         
         // Remover password de respuesta
-        result.forEach(u -> u.setPassword(null));
+        //result.forEach(u -> u.setPassword(null));
         return result;
     }
 
@@ -74,26 +74,63 @@ public class UserService {
         if (taxIds.contains(user.tax_id)) {
             throw new RuntimeException("tax_id '" + user.tax_id + "' ya existe");
         }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new RuntimeException("Password es requerido");
+        if (user.getPhone() != null) {
+            String formattedPhone = aplicarAndresFormat(user.getPhone());
+            user.setPhone(formattedPhone);
         }
-
-        // TODO: Validar phone AndresFormat
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new RuntimeException("Crear. Password es requerido");
+        }
 
         // Encriptar password
         user.setPassword(encriptarAES256(user.getPassword(), "miClaveSecreta32bytes123")); 
         user.id = UUID.randomUUID().toString(); // Generar ID único
         users.add(user);
         taxIds.add(user.tax_id);
-        user.setPassword(null); // Remover de respuesta
+        //user.setPassword(null); // Remover de respuesta
         return user;
     }
 
     // PATCH /users/{id}
     public User updateUser(String id, User partialUser) {
-        // Buscar, actualizar campos no null, validar tax_id único si cambia
-        // TODO: Implementar
-        return null;
+        // Buscar usuario existente
+        User existing = users.stream()
+            .filter(u -> u.id.equals(id))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Actualizar solo campos no nulos
+        if (partialUser.getEmail() != null) {
+            existing.setEmail(partialUser.getEmail());
+        }
+        if (partialUser.getName() != null) {
+            existing.setName(partialUser.getName());
+        }
+        if (partialUser.getPhone() != null) {
+            existing.setPhone(partialUser.getPhone());
+            // Aquí puedes volver a validar AndresFormat si aplica
+        }
+        if (partialUser.getTaxId() != null && !partialUser.getTaxId().equals(existing.getTaxId())) {
+            // Validar unicidad de tax_id
+            if (taxIds.contains(partialUser.getTaxId())) {
+                throw new RuntimeException("tax_id '" + partialUser.getTaxId() + "' ya existe");
+            }
+            // Actualizar set de taxIds
+            taxIds.remove(existing.getTaxId());
+            existing.setTaxId(partialUser.getTaxId());
+            taxIds.add(existing.getTaxId());
+        }
+        if (partialUser.getAddresses() != null) {
+            existing.setAddresses(partialUser.getAddresses());
+        }
+        if (partialUser.getPassword() != null) {
+            // Si permites cambiar password vía PATCH
+            existing.setPassword(encriptarAES256(partialUser.getPassword(), "miClaveSecreta32bytes123"));
+        }
+
+        // Limpiar password antes de devolver
+        //existing.clearPassword();
+        return existing;
     }
 
     // DELETE /users/{id}
@@ -124,12 +161,14 @@ public class UserService {
 
     private boolean matchesFilter(User u, String attr, String op, String value) {
         String fieldValue = getFieldValue(u, attr);
+        if (fieldValue == null) return false;
+        String fValue = fieldValue.toLowerCase();
         String val = value.toLowerCase();  // Case-insensitive
         return switch (op) {
-            case "co" -> fieldValue.contains(val);
-            case "eq" -> fieldValue.equals(val);
-            case "sw" -> fieldValue.startsWith(val);
-            case "ew" -> fieldValue.endsWith(val);
+            case "co" -> fValue.contains(val);
+            case "eq" -> fValue.equals(val);
+            case "sw" -> fValue.startsWith(val);
+            case "ew" -> fValue.endsWith(val);
             default -> false;
         };
     }
@@ -148,4 +187,20 @@ public class UserService {
             throw new RuntimeException("Error encriptación AES256", e);
         }
     }
+
+    private String aplicarAndresFormat(String phone) {
+    if (phone == null) return null;
+    
+    // Eliminar todo lo que no sea número (espacios, guiones, paréntesis)
+    String cleanDigits = phone.replaceAll("[^\\d]", "");
+    
+    // Validar longitud mínima
+    if (cleanDigits.length() < 10) {
+        throw new RuntimeException("AndresFormat Error: El teléfono debe tener al menos 10 dígitos numéricos.");
+    }
+    
+    // Asegurar que comience con '+' (E.164 simple)
+    // Si ya trae el '+' en el original, se lo ponemos al limpio
+    return "+" + cleanDigits;
+}
 }

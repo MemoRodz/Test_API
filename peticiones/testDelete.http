@@ -1,0 +1,2 @@
+### DELETE usuario por id
+DELETE http://localhost:8080/users/5b0b0feb-42a8-416e-ae20-56e452ab90f3

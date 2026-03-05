@@ -6,8 +6,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.Pattern; // Para validaciones
 
@@ -17,8 +17,10 @@ public class User {
     public String name;
     @Pattern(regexp = "^\\+?\\d{10,15}$", message = "Teléfono inválido: 10 dígitos min, con código país opcional") // Pendiente AndresFormat
     public String phone;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password; // Privado, se encripta
     @Pattern(regexp = "^[A-Z&Ñ]{3,4}\\d{6}[A-Z0-9]{3}$", message = "tax_id debe ser formato RFC") // Validación RFC básico
+    @JsonProperty("tax_id") // Para mapear JSON a tax_id
     public String tax_id;
     public String created_at;
     public List<Address> addresses;
@@ -55,9 +57,9 @@ public class User {
     public void setAddresses(List<Address> addresses) { this.addresses = addresses; }
 
     // Para limpiar password
-    public void clearPassword() { this.password = null; }
+    //public void clearPassword() { this.password = null; }
     // Solo para servicio interno (no expone en JSON) 
-    @JsonIgnore  // Oculta password en JSON responses
+    // @JsonIgnore  // Oculta password en JSON responses
     public String getPassword() { return password; }
     // Setters
     public void setPassword(String password) { this.password = password; }
