@@ -1,13 +1,13 @@
 
 ### Antes de ejecutar este test, asegúrate de tener el servidor corriendo en http://localhost:8080
-### Agregar el usuario con tax_id "AARR990101XXX" y password "7c4a8d09ca3762af61e59520943dc26494f8941b" (hash de "mipassword123") para este test.
+### Actualizar el usuario con tax_id "BBBS990202YYY" y password "mipassword123" (hash "4e0IU0JJo6M8ZvnrzqhZNg==") para este test.
 ### LOGIN correcto
-POST http://localhost:8080/login
+POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "tax_id": "AARR990101XXX",
-  "password": "7c4a8d09ca3762af61e59520943dc26494f8941b"
+  "tax_id": "BBBS990202YYY",
+  "password": "mipassword123"
 }
 
 ###

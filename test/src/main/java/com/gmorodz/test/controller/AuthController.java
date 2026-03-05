@@ -1,7 +1,6 @@
 package com.gmorodz.test.controller;
 
 import com.gmorodz.test.service.UserService;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -142,6 +142,7 @@ public class UserService {
             User user = userOpt.get();
             // Encriptar el password recibido con la MISMA clave que usaste en el POST
             String encryptedAttempt = encriptarAES256(password, "miClaveSecreta32bytes123");
+
             // Comparación de hashes
             if (encryptedAttempt.equals(user.getPassword())) {
                 // TODO: generar JWT real, por ahora un token simple

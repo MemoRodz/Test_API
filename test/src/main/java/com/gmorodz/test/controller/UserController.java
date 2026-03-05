@@ -29,8 +29,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
-            System.out.println("Llega a createUser, email= " + user.getEmail());
-            System.out.println("Llega a createUser, password= " + user.getPassword());
+
             User created = userService.createUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
