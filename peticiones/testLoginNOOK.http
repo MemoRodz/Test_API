@@ -1,0 +1,8 @@
+### LOGIN incorrecto
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "tax_id": "AARR990101XXX",
+  "password": "otraClave"
+}

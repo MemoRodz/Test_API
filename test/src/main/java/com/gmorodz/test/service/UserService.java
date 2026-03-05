@@ -133,11 +133,22 @@ public class UserService {
         // Remover de taxIds si aplica
     }
 
-    // /login
+    // login
     public String login(String tax_id, String password) {
-        // Buscar por tax_id, comparar password encriptada AES256
-        // TODO: Implementar, retornar JWT o token simple si OK
-        return "token";
+        Optional<User> userOpt = users.stream()
+        .filter(u -> u.getTaxId().equals(tax_id))
+        .findFirst();
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // Encriptar el password recibido con la MISMA clave que usaste en el POST
+            String encryptedAttempt = encriptarAES256(password, "miClaveSecreta32bytes123");
+            // Comparación de hashes
+            if (encryptedAttempt.equals(user.getPassword())) {
+                // TODO: generar JWT real, por ahora un token simple
+                return "SUCCESS: token-valido-para-" + user.getName();
+            }
+        }
+        throw new RuntimeException("Credenciales inválidas (tax_id o password incorrectos)");
     }
 
     // Helpers privados para sort/filter
