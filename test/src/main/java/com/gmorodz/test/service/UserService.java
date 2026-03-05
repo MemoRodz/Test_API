@@ -1,6 +1,7 @@
 package com.gmorodz.test.service;
 
 import java.nio.charset.StandardCharsets;
+// import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,6 @@ import com.gmorodz.test.model.Address;
 import com.gmorodz.test.model.User;
 
 import javax.crypto.Cipher;
-// import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public class UserService {
@@ -72,7 +72,7 @@ public class UserService {
     // POST /users
     public User createUser(User user) {
         if (taxIds.contains(user.tax_id)) {
-            throw new RuntimeException("tax_id debe ser único");
+            throw new RuntimeException("tax_id '" + user.tax_id + "' ya existe");
         }
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             throw new RuntimeException("Password es requerido");

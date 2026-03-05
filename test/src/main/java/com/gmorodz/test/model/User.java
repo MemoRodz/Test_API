@@ -1,6 +1,8 @@
 package com.gmorodz.test.model;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +34,7 @@ public class User {
         this.password = password; // Se encriptará al guardar
         this.tax_id = tax_id;
         this.addresses = addresses;
-        this.created_at = LocalDateTime.now() // Madagascar timezone pendiente
+        this.created_at = LocalDateTime.now(ZoneId.of("Indian/Antananarivo")) // Madagascar timezone
                 .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
     }
 

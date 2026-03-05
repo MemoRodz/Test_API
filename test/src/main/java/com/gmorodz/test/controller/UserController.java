@@ -4,6 +4,8 @@ package com.gmorodz.test.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +29,24 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
+            System.out.println("Llega a createUser, email=" + user.getEmail());
             User created = userService.createUser(user);
-            return ResponseEntity.ok(created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
-        // Implementar
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User partialUser) {
+        try {
+            User updated = userService.updateUser(id, partialUser);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
