@@ -1,12 +1,18 @@
 package com.gmorodz.test.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.stereotype.Service;
 
 import com.gmorodz.test.model.Address;
 import com.gmorodz.test.model.User;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public class UserService {
@@ -27,8 +33,16 @@ public class UserService {
         users.add(user1);
         taxIds.add(user1.tax_id);
 
-        // Repitir para user2 y user3 con datos diferentes
-        // TODO: Agrega los otros 2 usuarios
+        // User 2
+        User user2 = new User("carlo@mail.org", "magnocarlo", "+52 555 123 4567", "hash_password_2", "BBBS990202YYY", addresses1);
+        users.add(user2);
+        taxIds.add(user2.tax_id);
+
+        // User 3 - Usuario con password encriptada AES256 para prueba de login
+        User user3 = new User("magno@mail.net", "carlomagno", "+1 555 987 6543", "mipassword123", "AARR990101XXX", addresses1);
+        user3.setPassword(encriptarAES256(user3.getPassword(), "miClaveSecreta32bytes123"));    // Encriptación de password AES256 para usuario con dato duro.
+        users.add(user3);
+        taxIds.add(user3.tax_id);
     }
 
     // Métodos para GET /users (sort y filter)
@@ -50,8 +64,8 @@ public class UserService {
             }
         }
         
-        // Remover passwords de respuesta
-        result.forEach(u -> u.password = null);
+        // Remover password de respuesta
+        result.forEach(u -> u.setPassword(null));
         return result;
     }
 
@@ -60,12 +74,18 @@ public class UserService {
         if (taxIds.contains(user.tax_id)) {
             throw new RuntimeException("tax_id debe ser único");
         }
-        // TODO: Encriptar password AES256
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new RuntimeException("Password es requerido");
+        }
+
         // TODO: Validar phone AndresFormat
-        user.id = UUID.randomUUID().toString();
+
+        // Encriptar password
+        user.setPassword(encriptarAES256(user.getPassword(), "miClaveSecreta32bytes123")); 
+        user.id = UUID.randomUUID().toString(); // Generar ID único
         users.add(user);
         taxIds.add(user.tax_id);
-        user.password = null; // Remover de respuesta
+        user.setPassword(null); // Remover de respuesta
         return user;
     }
 
@@ -91,22 +111,41 @@ public class UserService {
 
     // Helpers privados para sort/filter
     private String getFieldValue(User u, String field) {
-        switch (field) {
-            case "email": return u.email;
-            case "id": return u.id;
-            // etc...
-            default: return "";
-        }
+        return switch (field.toLowerCase()) {  // Case-insensitive
+        case "id" -> u.getId();  // Agrega id
+        case "email" -> u.getEmail();
+        case "name" -> u.getName();
+        case "phone" -> u.getPhone();
+        case "tax_id" -> u.getTaxId();
+        case "created_at" -> u.getCreatedAt();
+        default -> "";
+        };
     }
 
     private boolean matchesFilter(User u, String attr, String op, String value) {
         String fieldValue = getFieldValue(u, attr);
+        String val = value.toLowerCase();  // Case-insensitive
         return switch (op) {
-            case "co" -> fieldValue.contains(value);
-            case "eq" -> fieldValue.equals(value);
-            case "sw" -> fieldValue.startsWith(value);
-            case "ew" -> fieldValue.endsWith(value);
+            case "co" -> fieldValue.contains(val);
+            case "eq" -> fieldValue.equals(val);
+            case "sw" -> fieldValue.startsWith(val);
+            case "ew" -> fieldValue.endsWith(val);
             default -> false;
         };
+    }
+
+        private String encriptarAES256(String plainPassword, String secretKey) {
+        if (plainPassword == null) {
+        throw new IllegalArgumentException("Password no puede ser null");
+        }
+        try {
+            SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] encrypted = cipher.doFinal(plainPassword.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception e) {
+            throw new RuntimeException("Error encriptación AES256", e);
+        }
     }
 }

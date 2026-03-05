@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.Pattern; // Para validaciones
 
 public class User {
@@ -35,7 +37,26 @@ public class User {
     }
 
     // Getters (sin password)
-    public String getPassword() { return password; } // Solo para login interno
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getTaxId() { return tax_id; }
+    public void setTaxId(String tax_id) { this.tax_id = tax_id; }
+    public String getCreatedAt() { return created_at; }
+    public void setCreatedAt(String created_at) { this.created_at = created_at; }
+    public List<Address> getAddresses() { return addresses; }
+    public void setAddresses(List<Address> addresses) { this.addresses = addresses; }
+
+    // Para limpiar password
+    public void clearPassword() { this.password = null; }
+    // Solo para servicio interno (no expone en JSON) 
+    @JsonIgnore  // Oculta password en JSON responses
+    public String getPassword() { return password; }
     // Setters
     public void setPassword(String password) { this.password = password; }
 }
