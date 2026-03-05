@@ -1,6 +1,9 @@
 package com.gmorodz.test.controller;
 
 import com.gmorodz.test.service.UserService;
+
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,12 +20,12 @@ public class AuthController {
     }
     
         @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
         try {
             String token = userService.login(request.tax_id(), request.password());
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(Map.of("token", token));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(401).body(e.getMessage());
+            return ResponseEntity.status(401).body(Map.of("error", e.getMessage()));
         }
     }
 

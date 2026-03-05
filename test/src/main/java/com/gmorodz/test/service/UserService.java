@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gmorodz.test.model.Address;
 import com.gmorodz.test.model.User;
+import com.gmorodz.test.security.JwtUtil;
 
 import javax.crypto.Cipher;
 
@@ -17,6 +19,9 @@ import javax.crypto.Cipher;
 public class UserService {
     private List<User> users = new ArrayList<>(); // Lista en memoria
     private Set<String> taxIds = new HashSet<>(); // Para unicidad
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public UserService() {
         // Inicializar 3 usuarios de ejemplo
@@ -145,8 +150,7 @@ public class UserService {
 
             // Comparación de hashes
             if (encryptedAttempt.equals(user.getPassword())) {
-                // TODO: generar JWT real, por ahora un token simple
-                return "SUCCESS: token-valido-para-" + user.getName();
+                return jwtUtil.generateToken(user.getTaxId(), user.getName());
             }
         }
         throw new RuntimeException("Credenciales inválidas (tax_id o password incorrectos)");
