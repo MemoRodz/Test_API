@@ -39,7 +39,7 @@ public class UserService {
         taxIds.add(user2.tax_id);
 
         // User 3 - Usuario con password encriptada AES256 para prueba de login
-        User user3 = new User("magno@mail.net", "carlomagno", "+1 555 987 6543", "mipassword123", "AARR990101XXX", addresses1);
+        User user3 = new User("magno@mail.net", "carlomagno", "+1 555 987 6543", "mipassword123", "CCCT990303ZZZ", addresses1);
         user3.setPassword(encriptarAES256(user3.getPassword(), "miClaveSecreta32bytes123"));    // Encriptación de password AES256 para usuario con dato duro.
         users.add(user3);
         taxIds.add(user3.tax_id);

@@ -1,0 +1,8 @@
+### PATCH actualizar solo nombre y teléfono
+PATCH http://localhost:8080/users/98974615-3827-4408-b461-238020cef425
+Content-Type: application/json
+
+{
+  "name": "Usuario Actualizado",
+  "phone": "+52 555 000 1111"
+}
