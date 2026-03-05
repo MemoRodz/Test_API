@@ -1,0 +1,12 @@
+### Crear nuevo usuario
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "simple@mail.com",
+  "name": "Simple",
+  "phone": "6789012345",
+  "password": "mipassword123",
+  "tax_id": "TEST123456ABC"
+}

@@ -1,0 +1,19 @@
+### Crear nuevo usuario
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "nuevo4@testmail.com",
+  "name": "Nuevo Usuario 4",
+  "phone": "+52 555 666 7777",
+  "password": "claveTest123",
+  "tax_id": "EEEV040404BBB",
+  "addresses": [
+    {
+      "id": 3,
+      "name": "trabajo",
+      "street": "Avenida Principal 123",
+      "country_code": "MX"
+    }
+  ]
+}

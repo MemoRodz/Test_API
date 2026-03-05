@@ -49,7 +49,7 @@ The goal of this project is to provide a clean, scalable, and maintainable API s
 
 2. - Cambiar a la carpeta del proyecto:
    ```bash
-   cd Test_API
+   cd Test_API/test
 
 3. Construir el proyecto:
    ```bash
@@ -67,7 +67,7 @@ The goal of this project is to provide a clean, scalable, and maintainable API s
 
 2. Navigate to the project folder:
    ```bash
-   cd Test_API
+   cd Test_API/test
 
 3. Build the project:
    ```bash
@@ -117,7 +117,7 @@ Resources:
 ### [ES]
 ## 📂 Estructura del proyecto
 
-Test_API/
+Test_API/test/
 ├── src/
 │   ├── main/
 │   │   ├── java/        # Código fuente
@@ -129,7 +129,7 @@ Test_API/
 ### [EN]
 ## 📂 Project Structure
 
-Test_API/
+Test_API/test/
 ├── src/
 │   ├── main/
 │   │   ├── java/        # Source code

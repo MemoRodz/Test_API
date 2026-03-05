@@ -1,0 +1,11 @@
+### POST simple (sin lista addresses)
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "test@mail.com",
+  "name": "Test User",
+  "phone": "1234567890",
+  "password": "pass123",
+  "tax_id": "TEST456123ABC"
+}
