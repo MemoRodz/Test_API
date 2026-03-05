@@ -1,7 +1,6 @@
 package com.gmorodz.test.service;
 
 import java.nio.charset.StandardCharsets;
-// import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,8 +63,6 @@ public class UserService {
             }
         }
         
-        // Remover password de respuesta
-        //result.forEach(u -> u.setPassword(null));
         return result;
     }
 
@@ -87,7 +84,6 @@ public class UserService {
         user.id = UUID.randomUUID().toString(); // Generar ID único
         users.add(user);
         taxIds.add(user.tax_id);
-        //user.setPassword(null); // Remover de respuesta
         return user;
     }
 
@@ -107,8 +103,8 @@ public class UserService {
             existing.setName(partialUser.getName());
         }
         if (partialUser.getPhone() != null) {
-            existing.setPhone(partialUser.getPhone());
-            // Aquí puedes volver a validar AndresFormat si aplica
+            String formattedPhone = aplicarAndresFormat(partialUser.getPhone());
+            existing.setPhone(formattedPhone);
         }
         if (partialUser.getTaxId() != null && !partialUser.getTaxId().equals(existing.getTaxId())) {
             // Validar unicidad de tax_id
@@ -124,12 +120,10 @@ public class UserService {
             existing.setAddresses(partialUser.getAddresses());
         }
         if (partialUser.getPassword() != null) {
-            // Si permites cambiar password vía PATCH
+            // Cambiar password vía PATCH
             existing.setPassword(encriptarAES256(partialUser.getPassword(), "miClaveSecreta32bytes123"));
         }
 
-        // Limpiar password antes de devolver
-        //existing.clearPassword();
         return existing;
     }
 
